@@ -9,13 +9,13 @@ import Foundation
 import UIKit
 
 class WeatherHomeViewModel: ObservableObject {
-    weak var vc: UIViewController?
     @Published var isLoading = false
-    var majorCities = [MajorCity]()
+    @Published var hasLoadedData = false
     @Published var majorCitiesWeatherData = [MajorCityWeatherData]()
     @Published var currentLocationWeatherData: MajorCityWeatherData?
     @Published var showFarenheitValue = false
     
+    var majorCities = [MajorCity]()
     init() {
         LocationManager.shared.delegate = self
         // Provide the list of cities that has to be shown on the home screen. This can be fetched from server.
@@ -64,6 +64,7 @@ class WeatherHomeViewModel: ObservableObject {
             DispatchQueue.main.async {
                 self.majorCitiesWeatherData = weatherDataListOfMajorCities
                 self.currentLocationWeatherData = currentCityWeatherDetails
+                self.hasLoadedData = true
             }
         }
     }

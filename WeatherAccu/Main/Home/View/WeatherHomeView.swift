@@ -15,33 +15,37 @@ struct WeatherHomeView: View {
             if viewModel.isLoading {
                 CustomLoadingView()
             } else {
-                ScrollView(showsIndicators: false) {
-                    CelciusOrFarenheitView(viewModel: viewModel)
-                    // Show major cities weather data
-                    if let cuurentCityWeatherData = viewModel.currentLocationWeatherData {
-                        CityWeatherCardView(name: cuurentCityWeatherData.name,
-                                            temp: cuurentCityWeatherData.weatherData?.main.temp,
-                                            tempLow: cuurentCityWeatherData.weatherData?.main.tempMin,
-                                            tempHigh: cuurentCityWeatherData.weatherData?.main.tempMax,
-                                            climate: cuurentCityWeatherData.weatherData?.weather.first?.description,
-                                            icon: cuurentCityWeatherData.weatherData?.weather.first?.icon,
-                                            showFarenheitValue: viewModel.showFarenheitValue,
-                                            isCurrentLocation: true)
+                if viewModel.currentLocationWeatherData != nil || !viewModel.majorCitiesWeatherData.isEmpty {
+                    ScrollView(showsIndicators: false) {
+                            CelciusOrFarenheitView(viewModel: viewModel)
+                            // Show major cities weather data
+                            if let cuurentCityWeatherData = viewModel.currentLocationWeatherData {
+                                CityWeatherCardView(name: cuurentCityWeatherData.name,
+                                                    temp: cuurentCityWeatherData.weatherData?.main.temp,
+                                                    tempLow: cuurentCityWeatherData.weatherData?.main.tempMin,
+                                                    tempHigh: cuurentCityWeatherData.weatherData?.main.tempMax,
+                                                    climate: cuurentCityWeatherData.weatherData?.weather.first?.description,
+                                                    icon: cuurentCityWeatherData.weatherData?.weather.first?.icon,
+                                                    showFarenheitValue: viewModel.showFarenheitValue,
+                                                    isCurrentLocation: true)
+                            }
+                            
+                            // Show if current location weather data is available.
+                            ForEach(viewModel.majorCitiesWeatherData, id: \.id) { city in
+                                CityWeatherCardView(name: city.name,
+                                                    temp: city.weatherData?.main.temp,
+                                                    tempLow: city.weatherData?.main.tempMin,
+                                                    tempHigh: city.weatherData?.main.tempMax,
+                                                    climate: city.weatherData?.weather.first?.description,
+                                                    icon: city.weatherData?.weather.first?.icon,
+                                                    showFarenheitValue: viewModel.showFarenheitValue,
+                                                    isCurrentLocation: false)
+                            }
                     }
-                    
-                    // Show if current location weather data is available.
-                    ForEach(viewModel.majorCitiesWeatherData, id: \.id) { city in
-                        CityWeatherCardView(name: city.name,
-                                            temp: city.weatherData?.main.temp,
-                                            tempLow: city.weatherData?.main.tempMin,
-                                            tempHigh: city.weatherData?.main.tempMax,
-                                            climate: city.weatherData?.weather.first?.description,
-                                            icon: city.weatherData?.weather.first?.icon,
-                                            showFarenheitValue: viewModel.showFarenheitValue,
-                                            isCurrentLocation: false)
-                    }
+                    .padding()
+                } else if viewModel.hasLoadedData {
+                    NoDataView()
                 }
-                .padding()
             }
         }
         .onAppear(perform: viewModel.loadWeatherData)
@@ -137,5 +141,23 @@ fileprivate struct CelciusOrFarenheitView: View {
                 .labelsHidden()
                 .padding(.trailing)
         }
+    }
+}
+
+fileprivate struct NoDataView: View {
+    var body: some View {
+        VStack(alignment: .center, spacing: 16) {
+            Spacer()
+            Image(systemName: "exclamationmark.icloud.fill")
+                .resizable()
+                .frame(width: 150, height: 100, alignment: .center)
+            Text("Something went wrong, Please try back later.")
+                .font(.title3)
+                .fontWeight(.regular)
+                .foregroundColor(.black)
+            Spacer()
+        }
+        .frame(maxWidth: .infinity,maxHeight: .infinity)
+        .padding()
     }
 }
