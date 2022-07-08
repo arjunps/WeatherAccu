@@ -14,6 +14,7 @@ class WeatherHomeViewModel: ObservableObject {
     var majorCities = [MajorCity]()
     @Published var majorCitiesWeatherData = [MajorCityWeatherData]()
     @Published var currentLocationWeatherData: MajorCityWeatherData?
+    @Published var showFarenheitValue = false
     
     init() {
         LocationManager.shared.delegate = self

@@ -16,6 +16,7 @@ struct WeatherHomeView: View {
                 CustomLoadingView()
             } else {
                 ScrollView(showsIndicators: false) {
+                    CelciusOrFarenheitView(viewModel: viewModel)
                     // Show major cities weather data
                     if let cuurentCityWeatherData = viewModel.currentLocationWeatherData {
                         CurrentLocationWeatherView(name: cuurentCityWeatherData.name,
@@ -23,7 +24,8 @@ struct WeatherHomeView: View {
                                                    tempLow: cuurentCityWeatherData.weatherData?.main.tempMin,
                                                    tempHigh: cuurentCityWeatherData.weatherData?.main.tempMax,
                                                    climate: cuurentCityWeatherData.weatherData?.weather.first?.description,
-                                                   icon: cuurentCityWeatherData.weatherData?.weather.first?.icon)
+                                                   icon: cuurentCityWeatherData.weatherData?.weather.first?.icon,
+                                                   showFarenheitValue: viewModel.showFarenheitValue)
                     }
                     
                     // Show if current location weather data is available.
@@ -33,10 +35,8 @@ struct WeatherHomeView: View {
                                             tempLow: city.weatherData?.main.tempMin,
                                             tempHigh: city.weatherData?.main.tempMax,
                                             climate: city.weatherData?.weather.first?.description,
-                                            icon: city.weatherData?.weather.first?.icon)
-                    }
-                    HStack {
-                        Spacer()
+                                            icon: city.weatherData?.weather.first?.icon,
+                                            showFarenheitValue: viewModel.showFarenheitValue)
                     }
                 }
                 .padding()
@@ -54,6 +54,7 @@ fileprivate struct CityWeatherCardView: View {
     let tempHigh: Double?
     let climate: String?
     let icon: String?
+    let showFarenheitValue: Bool
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -64,14 +65,14 @@ fileprivate struct CityWeatherCardView: View {
                         .fontWeight(.medium)
                         .foregroundColor(Color.black)
                         .fixedSize(horizontal: false, vertical: true)
-                    if let tempConverted = temp?.getKelvinToCelciusOrFarenheit(toCelcius: true) {
+                    if let tempConverted = temp?.getKelvinToCelciusOrFarenheit(toCelcius: !showFarenheitValue) {
                         Text("\(tempConverted)")
                             .font(.largeTitle)
                             .fontWeight(.light)
                             .foregroundColor(Color.black)
                             .fixedSize(horizontal: false, vertical: true)
                     }
-                    if let tempConvertedLow = tempLow?.getKelvinToCelciusOrFarenheit(toCelcius: true), let tempConvertedHigh = tempHigh?.getKelvinToCelciusOrFarenheit(toCelcius: true) {
+                    if let tempConvertedLow = tempLow?.getKelvinToCelciusOrFarenheit(toCelcius: !showFarenheitValue), let tempConvertedHigh = tempHigh?.getKelvinToCelciusOrFarenheit(toCelcius: !showFarenheitValue) {
                         Text("H:\(tempConvertedHigh) / L:\(tempConvertedLow)")
                             .font(.caption)
                             .fontWeight(.regular)
@@ -119,7 +120,8 @@ fileprivate struct CurrentLocationWeatherView: View {
     let tempHigh: Double?
     let climate: String?
     let icon: String?
-    
+    let showFarenheitValue: Bool
+
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("Current Location")
@@ -134,14 +136,14 @@ fileprivate struct CurrentLocationWeatherView: View {
                         .fontWeight(.medium)
                         .foregroundColor(Color.white)
                         .fixedSize(horizontal: false, vertical: true)
-                    if let tempConverted = temp?.getKelvinToCelciusOrFarenheit(toCelcius: true) {
+                    if let tempConverted = temp?.getKelvinToCelciusOrFarenheit(toCelcius: !showFarenheitValue) {
                         Text("\(tempConverted)")
                             .font(.largeTitle)
                             .fontWeight(.light)
                             .foregroundColor(Color.white)
                             .fixedSize(horizontal: false, vertical: true)
                     }
-                    if let tempConvertedLow = tempLow?.getKelvinToCelciusOrFarenheit(toCelcius: true), let tempConvertedHigh = tempHigh?.getKelvinToCelciusOrFarenheit(toCelcius: true) {
+                    if let tempConvertedLow = tempLow?.getKelvinToCelciusOrFarenheit(toCelcius: !showFarenheitValue), let tempConvertedHigh = tempHigh?.getKelvinToCelciusOrFarenheit(toCelcius: !showFarenheitValue) {
                         Text("H:\(tempConvertedHigh) / L:\(tempConvertedLow)")
                             .font(.caption)
                             .fontWeight(.regular)
@@ -179,5 +181,19 @@ fileprivate struct CurrentLocationWeatherView: View {
                     x: 0,
                     y: 0
                 ))
+    }
+}
+
+fileprivate struct CelciusOrFarenheitView: View {
+    @ObservedObject var viewModel: WeatherHomeViewModel
+    
+    var body: some View {
+        HStack {
+            Spacer()
+            Text("\u{00B0}F")
+            Toggle("", isOn: $viewModel.showFarenheitValue)
+                .labelsHidden()
+                .padding(.trailing)
+        }
     }
 }
