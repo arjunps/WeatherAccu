@@ -16,16 +16,6 @@ struct WeatherHomeView: View {
                 CustomLoadingView()
             } else {
                 ScrollView(showsIndicators: false) {
-                    // Show if current location weather data is available.
-                    ForEach(viewModel.majorCitiesWeatherData, id: \.id) { city in
-                        CityWeatherCardView(name: city.name,
-                                            temp: city.weatherData?.main.temp,
-                                            tempLow: city.weatherData?.main.tempMin,
-                                            tempHigh: city.weatherData?.main.tempMax,
-                                            climate: city.weatherData?.weather.first?.description,
-                                            icon: city.weatherData?.weather.first?.icon)
-                    }
-                    
                     // Show major cities weather data
                     if let cuurentCityWeatherData = viewModel.currentLocationWeatherData {
                         CurrentLocationWeatherView(name: cuurentCityWeatherData.name,
@@ -36,6 +26,18 @@ struct WeatherHomeView: View {
                                                    icon: cuurentCityWeatherData.weatherData?.weather.first?.icon)
                     }
                     
+                    // Show if current location weather data is available.
+                    ForEach(viewModel.majorCitiesWeatherData, id: \.id) { city in
+                        CityWeatherCardView(name: city.name,
+                                            temp: city.weatherData?.main.temp,
+                                            tempLow: city.weatherData?.main.tempMin,
+                                            tempHigh: city.weatherData?.main.tempMax,
+                                            climate: city.weatherData?.weather.first?.description,
+                                            icon: city.weatherData?.weather.first?.icon)
+                    }
+                    HStack {
+                        Spacer()
+                    }
                 }
                 .padding()
             }
@@ -54,7 +56,7 @@ fileprivate struct CityWeatherCardView: View {
     let icon: String?
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 12) {
             HStack {
                 VStack(alignment: .leading) {
                     Text(name)
