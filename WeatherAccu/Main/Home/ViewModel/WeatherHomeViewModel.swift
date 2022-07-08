@@ -84,6 +84,7 @@ class WeatherHomeViewModel: ObservableObject {
 }
 
 extension WeatherHomeViewModel: LocationManagerDelegate {
+    // Gets triggered when user changes the authorization.
     func updateCurrentWeatherData() {
         getCurrentWeatherData()
     }
