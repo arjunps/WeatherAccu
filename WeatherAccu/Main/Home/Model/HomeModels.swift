@@ -8,12 +8,13 @@
 import Foundation
 
 struct MajorCity: Codable {
+    let id: Int
     let name: String
     let coordinate: LocationCoordinate
 }
 
 struct MajorCityWeatherData: Codable, Identifiable {
-    let id = UUID()
+    let id: Int
     let name: String
     let coordinate: LocationCoordinate
     let weatherData: WeatherResponseBody?
