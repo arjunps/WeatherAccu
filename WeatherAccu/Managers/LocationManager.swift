@@ -16,7 +16,10 @@ class LocationManager: NSObject {
     
     // Creating an instance of CLLocationManager
     private static var _shared: LocationManager?
-
+    
+    private var manager: CLLocationManager?
+    weak var delegate: LocationManagerDelegate?
+    
     static var shared: LocationManager {
         if _shared == nil {
             _shared = LocationManager()
@@ -25,12 +28,6 @@ class LocationManager: NSObject {
         return _shared!
     }
 
-    private var manager: CLLocationManager?
-    weak var delegate: LocationManagerDelegate?
-    
-    // To store last fetched location
-    var lastFetchedLocation: CLLocation?
-    
     override private init() {
         manager = CLLocationManager()
         manager?.activityType = .automotiveNavigation
@@ -58,8 +55,6 @@ extension LocationManager: CLLocationManagerDelegate {
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        lastFetchedLocation = locations.first
-        
         //Save last saved location to Userdefaults
         StorageDefaults.lastSavedLocation = LocationCoordinate(latitude: locations.first?.coordinate.latitude ?? 0.0, longitude: locations.first?.coordinate.longitude ?? 0.0)
         self.delegate?.updateCurrentWeatherData()
