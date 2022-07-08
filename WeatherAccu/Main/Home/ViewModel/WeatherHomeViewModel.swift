@@ -18,7 +18,7 @@ class WeatherHomeViewModel: ObservableObject {
     
     init() {
         LocationManager.shared.delegate = self
-        // Provide the list of cities that has to be shown on the home screen.
+        // Provide the list of cities that has to be shown on the home screen. This can be fetched from server.
         self.majorCities = [MajorCity(id: 0, name: "Gothenburg", coordinate: LocationCoordinate(latitude: 57.708870, longitude: 11.974560)),
                             MajorCity(id: 1, name: "Stockholm", coordinate: LocationCoordinate(latitude: 59.334591, longitude: 18.063240)),
                             MajorCity(id: 2, name: "Moutain View", coordinate: LocationCoordinate(latitude: 37.386051, longitude: -122.083855)),
@@ -28,7 +28,6 @@ class WeatherHomeViewModel: ObservableObject {
     }
     
     // Gets the weather data for the given set of cities
-    
     func loadWeatherData() {
         isLoading = true
         var weatherDataListOfMajorCities = [MajorCityWeatherData]()
